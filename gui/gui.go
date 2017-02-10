@@ -15,11 +15,11 @@ import (
 const MESSAGE_BEGIN = "*"
 const MESSAGE_END = "#"
 
-var ValidSensors = [3]string{"Pot", "Imu", "Ir"}
+var ValidSensors = [3]string{"Pot", "Enc", "Ir"}
 
 type SensorData struct {
     Pot int
-    Imu string
+    Enc string
     Ir  int
 } 
 
@@ -121,7 +121,7 @@ func sendSensorInfo(received []byte) {
         sensorName := parsed[0]
         if isValidSensorName(sensorName) && len(parsed) == 2 {
             sensorNameField := reflect.ValueOf(&sensorData).Elem().FieldByName(sensorName)
-            if sensorName == "Imu" {
+            if sensorName == "Enc" {
                 sensorNameField.SetString(parsed[1])
             } else {
                 sensorVal, err := strconv.Atoi(parsed[1])

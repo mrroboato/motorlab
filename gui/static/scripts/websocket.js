@@ -13,14 +13,12 @@ $(document).ready(function() {
         var potMonitor = $('#potMonitor');
         potMonitor.text(sensorData['Pot']);
 
-        var imuMonitor = $('#imuMonitor');
+        var encoderMonitor = $('#encoderMonitor');
         // ultMonitor.text(sensorData['Ult']);
-        imuData = sensorData['Imu'].split(";");
+        encoderData = sensorData['Enc'].split(";");
         // console.log(imuData);
         // console.log("%d, %d, %d", imuData[0],imuData[1], imuData[2]);
-        imuMonitor.text("X orientation: " + imuData[0].toString() +  "\n" + 
-                        ", Y orientation: " + imuData[1].toString() + "\n" + 
-                        ", Z orientation: " + imuData[2].toString());
+        encoderMonitor.text(sensorData['Enc']);
 
         var irMonitor = $('#irMonitor');
         irMonitor.text(sensorData['Ir']);
