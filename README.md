@@ -1,4 +1,4 @@
-# sensorslab
+# motorlab
 
 #### CMU Mechatronics 2017 Team A Motor Lab
 
