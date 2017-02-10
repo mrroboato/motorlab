@@ -33,8 +33,8 @@ $(document).ready(function() {
         var potMonitor = $('#potMonitor');
         potMonitor.text(connectionClosedText);
 
-        var ultMonitor = $('#ultMonitor');
-        ultMonitor.text(connectionClosedText);
+        var imuMonitor = $('#imuMonitor');
+        imuMonitor.text(connectionClosedText);
 
         var irMonitor = $('#irMonitor');
         irMonitor.text(connectionClosedText);
