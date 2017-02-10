@@ -31,8 +31,8 @@ $(document).ready(function() {
         var potMonitor = $('#potMonitor');
         potMonitor.text(connectionClosedText);
 
-        var imuMonitor = $('#imuMonitor');
-        imuMonitor.text(connectionClosedText);
+        var encoderMonitor = $('#encoderMonitor');
+        encoderMonitor.text(connectionClosedText);
 
         var irMonitor = $('#irMonitor');
         irMonitor.text(connectionClosedText);
