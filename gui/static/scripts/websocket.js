@@ -1,8 +1,8 @@
 // websocket.js
 
-$(document).ready(function() {
+var socket = new WebSocket("ws://localhost:2441/websocket");
 
-    var socket = new WebSocket("ws://localhost:2441/websocket");
+$(document).ready(function() {
 
     socket.onmessage = function (evt) {
 
@@ -37,6 +37,30 @@ $(document).ready(function() {
         var irMonitor = $('#irMonitor');
         irMonitor.text(connectionClosedText);
     };
+
+    $("#servoSlider").on("input change", function() { sendServoData(); });
+    $("#dcSlider").on("input change", function() { sendServoData(); });
+    $('#stepperButton').attr('href','javascript:sendMessage()');
 });
+
+var sendServoData = function() {
+    if(socket.readyState === socket.OPEN){
+       socket.send('Servo');
+       console.log("Servo message sent");
+    }
+}
+
+var sendDCData = function() {
+    if(socket.readyState === socket.OPEN){
+       socket.send('DC');
+       console.log("DC message sent");
+    }
+}
+
+var sendStepperData = function() {
+    if(socket.readyState === socket.OPEN){
+       socket.send('Stepper');
+    }
+}
 
 

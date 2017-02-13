@@ -38,8 +38,8 @@
             <h5 class="sensor-name">Potentiometer</h5>
             <div id="potMonitor"> </div>
             <form action="#">
-                <p class="range-field">
-                  <input type="range" id="rcSlider" min="0" max="180" />
+                <p class="range-field">`
+                  <input type="range" id="servoSlider" min="0" max="180" step="1"/>
                 </p>
             </form>
         </div>
@@ -56,7 +56,7 @@
             <div id="encoderMonitor"> </div>
             <form action="#">
                 <p class="range-field">
-                  <input type="range" id="dcSlider" min="-100" max="100" />
+                  <input type="range" id="dcSlider" min="-100" max="100" step="1"/>
                 </p>
             </form>
         </div>
@@ -71,7 +71,9 @@
             <h4 class="motor-name">Stepper Motor</h4>
             <h5 class="sensor-name">Photoresistor</h5>
             <div id="irMonitor"> </div>
-            <a class="waves-effect waves-light btn"><i class="material-icons left">play_arrow</i>Flash Light</a>
+            <a class="waves-effect waves-light btn" id="stepperButton">
+                <i class="material-icons left">play_arrow</i>Flash Light
+            </a>
         </div>
          <!-- Filler -->
         <div class="col s8 m4 l6"> </div>
