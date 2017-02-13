@@ -37,7 +37,8 @@ func main() {
     if (len(commandlineArgs)) < 2 {
         log.Printf("\n" + 
             "ERROR: Specify port name.\n" + 
-            "On mac or linux, you can search for available COM ports with 'ls /dev/tty.*'.\n")
+            "On mac or linux, you can search for available COM ports with 'ls /dev/tty.*'.\n" + 
+            "On Windows, you can search for go to Control Panel > Device Manager.\n")
         return;
     } else if (len(commandlineArgs) > 2) {
         log.Printf("ERROR: Too many arguments!")
