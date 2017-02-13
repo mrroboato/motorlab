@@ -1,9 +1,30 @@
 /* custom.css */
 
 .title {
-	color: #283593; 
+	color: #263238; 
+}
+
+.motor-name {
+    color: #263238;
+}
+
+.sensor-name {
+    color: #616161;
+}
+
+.control-mode {
+    color: #263238;
 }
 
 .switchMargin {
     margin: 32px;
+}
+
+.range-min {
+    float: left;
+}
+
+.range-max {
+    right:0;
+    position: absolute;
 }
