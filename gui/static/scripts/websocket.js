@@ -39,8 +39,8 @@ $(document).ready(function() {
     };
 
     $("#servoSlider").on("input change", function() { sendServoData(); });
-    $("#dcSlider").on("input change", function() { sendServoData(); });
-    $('#stepperButton').attr('href','javascript:sendMessage()');
+    $("#dcSlider").on("input change", function() { sendDCData(); });
+    $('#stepperButton').attr('href','javascript:sendStepperData()');
 });
 
 var sendServoData = function() {

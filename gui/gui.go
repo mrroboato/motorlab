@@ -59,12 +59,20 @@ func initServer() {
 
     var err error
 
+    // Websocket connection handler.
     http.HandleFunc("/websocket", func(w http.ResponseWriter, r *http.Request) {      
         connection, err = upgrader.Upgrade(w, r, nil)
         log.Printf("Made connection to client.")
         handleError(err)
+        for {
+            _, p, err := connection.ReadMessage()
+            handleError(err)
+            log.Printf("%s\n", p);
+            // printByteBuffer(p)
+        }
     })
 
+    // GUI HTTP Request receiver.
     http.Handle("/", http.FileServer(http.Dir("./static")))
     http.ListenAndServe(":2441", nil)
 }
@@ -142,6 +150,10 @@ func sendSensorInfo(received []byte) {
     handleError(err)
 }
 
+func receiveSensorData(sensorName string, senorValue int) {
+    log.Printf("sensorName: %s, senorValue: %d\n", sensorName, senorValue);
+}
+
 func handleError(err error) {
     if err != nil {
         log.Fatal(err)
@@ -155,4 +167,12 @@ func isValidSensorName(name string) bool {
         }
     }
     return false
+}
+
+func printByteBuffer(s []byte) {
+    log.Printf("Received b:");
+    for n := 0;n < len(s);n++ {
+        log.Printf("%d,",s[n]);
+    }
+    log.Printf("\n");
 }
