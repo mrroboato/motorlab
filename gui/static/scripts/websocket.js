@@ -13,12 +13,12 @@ $(document).ready(function() {
         var potMonitor = $('#potMonitor');
         potMonitor.text(sensorData['Pot']);
 
-        var encoderMonitor = $('#encoderMonitor');
+        var irMonitor = $('#irMonitor');
         // ultMonitor.text(sensorData['Ult']);
-        encoderData = sensorData['Enc'].split(";");
+        irData = sensorData['Enc'].split(";");
         // console.log(imuData);
         // console.log("%d, %d, %d", imuData[0],imuData[1], imuData[2]);
-        encoderMonitor.text(sensorData['Enc']);
+        irMonitor.text(irData['Enc']);
 
         var photoMonitor = $('#photoMonitor');
         photoMonitor.text(sensorData['Ir']);
@@ -31,7 +31,7 @@ $(document).ready(function() {
         var potMonitor = $('#potMonitor');
         potMonitor.text(connectionClosedText);
 
-        var encoderMonitor = $('#encoderMonitor');
+        var encoderMonitor = $('#irMonitor');
         encoderMonitor.text(connectionClosedText);
 
         var photoMonitor = $('#photoMonitor');
