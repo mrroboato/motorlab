@@ -46,7 +46,7 @@ $(document).ready(function() {
 
 var sendSwitchData = function() {
     if(socket.readyState === socket.OPEN) {
-        var switchVal = $('#controlModeSwitch').val();
+        var switchVal = $('#controlModeSwitch').prop('checked');
         socket.send('Switch: ' + switchVal.toString());
         // console.log("Switch message sent");
     }
