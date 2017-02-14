@@ -43,7 +43,8 @@ $(document).ready(function() {
     $('#controlModeSwitch').change(function() { onSwitchClick(); }); 
     $("#servoSlider").on("input change", function() { sendServoData(); });
     $("#dcSlider").on("input change", function() { sendDCData(); });
-    $('#stepperButton').attr('href','javascript:sendStepperData()');
+    $('#stepperRunButton').attr('href','javascript:sendStepperRunData()');
+    $('#stepperStopButton').attr('href','javascript:sendStepperStopData()');
 });
 
 
@@ -77,9 +78,15 @@ var sendDCData = function() {
     }
 }
 
-var sendStepperData = function() {
+var sendStepperRunData = function() {
     if(socket.readyState === socket.OPEN) {
-        socket.send('stepper:clicked');
+        socket.send('stepper:1');
+    }
+}
+
+var sendStepperStopData = function() {
+    if(socket.readyState === socket.OPEN) {
+        socket.send('stepper:0');
     }
 }
 

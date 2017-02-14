@@ -99,7 +99,7 @@ func initServer() {
                     message = []byte("dc:" + string(motorVal) + "\r")
 
                 case "stepper":
-                    message = []byte("stepper:0\r")
+                    message = []byte("stepper:" + string(motorVal) + "\r")
                 }
 
                 _, err = serialCon.Write(message)

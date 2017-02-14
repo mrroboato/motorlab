@@ -71,8 +71,8 @@ void loop() {
                 dc_input = atoi(motorVal);
                 Serial.println("*DC Input: " + String(motorVal) + "#");
             } else if (strcmp(motorName, "stepper") == 0) {
-                stepper_input = HIGH;
-                Serial.println("*Activating Stepper#");
+                stepper_input = atoi(motorVal);
+                Serial.println("*Stepper Input: " + String(motorVal) + "#");
             }
         }
     } 
@@ -86,7 +86,8 @@ void loop() {
     servoControl(servo_input);
     motorControl(dc_input);
     stepperControl(stepper_input);
-    delay(50);
+    delay(50
+    );
     
 }
 
