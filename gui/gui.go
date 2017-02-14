@@ -73,7 +73,7 @@ func initServer() {
         for {
             _, p, err := socketCon.ReadMessage()
             handleError(err)
-            log.Printf("%s\n", p);
+            // log.Printf("%s\n", p);
             if serialCon != nil {
                 log.Printf("Sending to arduino.");
                 messageSlice := strings.Split(string(p), ":")
@@ -84,11 +84,11 @@ func initServer() {
                     if motorVal == "false" {
                         // messageArray := [1]byte{STATE_SENSOR}
                         // message = messageArray[:]
-                        message = []byte("sensor\n")
+                        message = []byte("sensor\r")
                     } else {
                         // messageArray := [1]byte{STATE_GUI}
                         // message = messageArray[:]
-                        message = []byte("gui\n")
+                        message = []byte("gui\r")
                     }
                 } 
 

@@ -61,15 +61,16 @@ void checkForStateChange() {
 
   static char buffer[80];
   if (readline(Serial.read(), buffer, 80) > 0) {
-    Serial.println("*Read!!#");
-    if (buffer == "sensor") {
+    if (strcmp(buffer, "sensor") == 0) {
       motor_state = STATE_SENSOR;
-    } else if (buffer == "gui") {
+      Serial.println("*Motor State: Sensor#");
+    } else if (strcmp(buffer, "gui") == 0) {
       motor_state = STATE_GUI;
+      Serial.println("*Motor State: GUI#");
     }
-    Serial.print("*You entered: >");
-    Serial.print(buffer);
-    Serial.println("<#");
+//    Serial.print("*You entered: >");
+//    Serial.print(buffer);
+//    Serial.println("<#");
   }
 }
 
@@ -161,7 +162,7 @@ float irDistance()
 
   float x = stats.median(sig,n);
   float distance = .00036008*x*x - .28975*x + 68.567;
-  Serial.println(distance);
+//  Serial.println(distance);
   return distance;
 }
 
@@ -170,8 +171,6 @@ int readline(int readch, char *buffer, int len) {
   static int pos = 0;
   int rpos;
   
-  Serial.println("reading");
-
   if (readch > 0) {
     switch (readch) {
       case '\n': // Ignore new-lines
