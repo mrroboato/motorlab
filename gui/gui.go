@@ -75,22 +75,32 @@ func initServer() {
             handleError(err)
             // log.Printf("%s\n", p);
             if serialCon != nil {
-                log.Printf("Sending to arduino.");
+                // log.Printf("Sending to arduino.");
                 messageSlice := strings.Split(string(p), ":")
                 motorName := messageSlice[0]
                 motorVal := messageSlice[1]
                 message := p;
-                if motorName == "Switch" {
+                switch motorName {
+                case "switch":
                     if motorVal == "false" {
                         // messageArray := [1]byte{STATE_SENSOR}
                         // message = messageArray[:]
-                        message = []byte("sensor\r")
+                        message = []byte("state:0\r")
                     } else {
                         // messageArray := [1]byte{STATE_GUI}
                         // message = messageArray[:]
-                        message = []byte("gui\r")
+                        message = []byte("state:1\r")
                     }
-                } 
+
+                case "servo":
+                    message = []byte("servo:" + string(motorVal) + "\r")
+
+                case "dc":
+                    message = []byte("dc:" + string(motorVal) + "\r")
+
+                case "stepper":
+                    message = []byte("stepper:0\r")
+                }
 
                 _, err = serialCon.Write(message)
                 handleError(err)

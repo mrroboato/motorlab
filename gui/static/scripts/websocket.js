@@ -56,7 +56,7 @@ var onSwitchClick = function() {
 
 var sendSwitchData = function(switchVal) {
     if(socket.readyState === socket.OPEN) {
-        socket.send('Switch:' + switchVal.toString());
+        socket.send('switch:' + switchVal.toString());
         // console.log("Switch message sent");
     }
 }
@@ -64,7 +64,7 @@ var sendSwitchData = function(switchVal) {
 var sendServoData = function() {
     if(socket.readyState === socket.OPEN) {
         var servoVal = $('#servoSlider').val();
-        socket.send('Servo:' + servoVal.toString());
+        socket.send('servo:' + servoVal.toString());
         // console.log("Servo message sent");
     }
 }
@@ -72,14 +72,14 @@ var sendServoData = function() {
 var sendDCData = function() {
     if(socket.readyState === socket.OPEN) {
         var dcVal = $('#dcSlider').val();
-        socket.send('DC:' + dcVal.toString());
+        socket.send('dc:' + dcVal.toString());
         // console.log("DC message sent");
     }
 }
 
 var sendStepperData = function() {
     if(socket.readyState === socket.OPEN) {
-        socket.send('Stepper:clicked');
+        socket.send('stepper:clicked');
     }
 }
 

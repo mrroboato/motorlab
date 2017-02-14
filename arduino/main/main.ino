@@ -10,11 +10,15 @@
 #define LIGHT_PIN (A3)
 #define SENSOR_PIN (A1)
 #define POT_PIN (A0)
-#define STATE_SENSOR (1)
-#define STATE_GUI (0)
+#define STATE_SENSOR (0)
+#define STATE_GUI (1)
 Servo ht_servo;
 int motor_state = STATE_SENSOR;
 byte byteRead;
+
+int servo_input;
+int dc_input;
+int stepper_input;
 
 QuickStats stats; 
 
@@ -37,78 +41,64 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  checkForStateChange();
+    // put your main code here, to run repeatedly:
+    checkSwitch();
 
-  // Sensor Control
-  if (motor_state == STATE_SENSOR) {
-      readSensors();  
-  } else if(motor_state == STATE_GUI) {
-      readGui();
-  }
+    // See if anything is in serial buffer.
+    static char buffer[80];
+    if (readline(Serial.read(), buffer, 80) > 0) {
+        
+        char *motorName, *motorVal;
 
+        motorName = strtok(buffer,":");
+        motorVal = strtok(NULL,":");
+
+        Serial.println("*Received command >" + String(motorName) + ":" + String(motorVal) + "<#");
+        
+        if (strcmp(motorName, "state") == 0) {
+            if (strcmp(motorVal, "0") == 0) {
+                motor_state = STATE_SENSOR;
+                Serial.println("*Motor State: Sensor#");
+            } else if (strcmp(motorVal, "1") == 0) {
+                motor_state = STATE_GUI;
+                Serial.println("*Motor State: GUI#");
+            }
+        } else if (motor_state == STATE_GUI) { // We read from serial, so might as well.
+            if (strcmp(motorName, "servo") == 0) {
+                servo_input = atoi(motorVal);
+                Serial.println("*Servo Input: " + String(motorVal) + "#");
+            } else if (strcmp(motorName, "dc") == 0) {
+                dc_input = atoi(motorVal);
+                Serial.println("*DC Input: " + String(motorVal) + "#");
+            } else if (strcmp(motorName, "stepper") == 0) {
+                stepper_input = HIGH;
+                Serial.println("*Activating Stepper#");
+            }
+        }
+    } 
+
+    // Sensor Read
+    if (motor_state == STATE_SENSOR) {
+        readSensors();  
+    } 
+
+    // Set Motors
+    servoControl(servo_input);
+    motorControl(dc_input);
+    stepperControl(stepper_input);
+    delay(50);
+    
 }
 
-void checkForStateChange() {
-  if(digitalRead(SWITCH_PIN) == HIGH)
-  {
-    while(digitalRead(SWITCH_PIN) == HIGH)
+void checkSwitch() {
+    if(digitalRead(SWITCH_PIN) == HIGH)
     {
-      delay(100);
-    }
-    motor_state = !motor_state;
-  }
-
-  static char buffer[80];
-  if (readline(Serial.read(), buffer, 80) > 0) {
-    if (strcmp(buffer, "sensor") == 0) {
-      motor_state = STATE_SENSOR;
-      Serial.println("*Motor State: Sensor#");
-    } else if (strcmp(buffer, "gui") == 0) {
-      motor_state = STATE_GUI;
-      Serial.println("*Motor State: GUI#");
-    }
-//    Serial.print("*You entered: >");
-//    Serial.print(buffer);
-//    Serial.println("<#");
-  }
-}
-
-void readSensors() {
-  
-    // Servo motor and potentiometer
-    float raw_pot = analogRead(POT_PIN);
-    float pot_val = (raw_pot / 1024) * 180;
-    servoControl(pot_val);
-
-    // DC motor and ir proximity sensor.
-    int pwr = irDistance()*2;
-    if(pwr < 40)
-    {
-      pwr = -pwr;
-    }
-    motorControl(pwr);
-    delay(100);
-
-    // Stepper motor and Stepper motor.
-    float raw = analogRead(LIGHT_PIN);
-    float light_val = (raw/1024)*5;
-    if(light_val > 4.7)
-    {
-        stepperControl(HIGH);
-    }
-    else if(light_val < 4)
-    {
-        stepperControl(LOW);
-    }
-}
-
-void readGui() {
-  
-//  while (Serial.available()) {
-//    byteRead = Serial.read();
-//  }
-  
+      while(digitalRead(SWITCH_PIN) == HIGH)
+      {
+        delay(100);
+      }
+      motor_state = !motor_state;
+    }  
 }
 
 
@@ -150,6 +140,34 @@ void motorControl(int speed)
 
 
 /* Sensor Read functions */
+
+void readSensors() {
+  
+    // Servo motor and potentiometer
+    float raw_pot = analogRead(POT_PIN);
+    float pot_val = (raw_pot / 1024) * 180;
+    servo_input = pot_val;
+
+    // DC motor and ir proximity sensor.
+    int pwr = irDistance()*2;
+    if(pwr < 40)
+    {
+      pwr = -pwr;
+    }
+    dc_input = pwr;
+
+    // Stepper motor and Stepper motor.
+    float raw = analogRead(LIGHT_PIN);
+    float light_val = (raw/1024)*5;
+    if(light_val > 4.7)
+    {
+        stepper_input = HIGH;
+    }
+    else if(light_val < 4)
+    {
+        stepper_input = LOW;
+    }
+}
 
 float irDistance()
 {
