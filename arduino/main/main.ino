@@ -13,7 +13,7 @@
 #define STATE_SENSOR (1)
 #define STATE_GUI (0)
 Servo ht_servo;
-int motor_state = STATE_GUI;
+int motor_state = STATE_SENSOR;
 byte byteRead;
 
 QuickStats stats; 
@@ -38,7 +38,18 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  checkForStateChange();
 
+  // Sensor Control
+  if (motor_state == STATE_SENSOR) {
+      readSensors();  
+  } else if(motor_state == STATE_GUI) {
+      readGui();
+  }
+
+}
+
+void checkForStateChange() {
   if(digitalRead(SWITCH_PIN) == HIGH)
   {
     while(digitalRead(SWITCH_PIN) == HIGH)
@@ -46,20 +57,29 @@ void loop() {
       delay(100);
     }
     motor_state = !motor_state;
-    Serial.print("Motor State: ");
-    Serial.println(motor_state);
   }
+  
+  while (Serial.available()) {
+//    byteRead = Serial.read();
+//    if (byteRead == '%') {
+//      motor_state = STATE_SENSOR;
+//      return;
+//    } else if (byteRead == '^') {
+//      motor_state = STATE_GUI;
+//      return;
+//    }
+      String received = readNextAvailableMessage();
+      if (received == "sensor") {
+        motor_state = STATE_SENSOR;
+      } else if (received == "gui") {
+        motor_state = STATE_GUI;
+      }
 
-  // Sensor Control
-  if (motor_state == STATE_SENSOR) {
-      sensor();  
-  } else if(motor_state == STATE_GUI) {
-      gui();
+      Serial.print("*" + received + "#");
   }
-
 }
 
-void sensor() {
+void readSensors() {
   
     // Servo motor and potentiometer
     float raw_pot = analogRead(POT_PIN);
@@ -88,11 +108,10 @@ void sensor() {
     }
 }
 
-void gui() {
+void readGui() {
   
   while (Serial.available()) {
     byteRead = Serial.read();
-    Serial.write(byteRead);
   }
   
 }
@@ -150,5 +169,36 @@ float irDistance()
   float distance = .00036008*x*x - .28975*x + 68.567;
   Serial.println(distance);
   return distance;
+}
+
+/* Utilities */
+String readNextAvailableMessage() {
+//    String received = String();
+//    while (Serial.available()) {
+//        byteRead = Serial.read();
+//        if (byteRead == '*') {
+//            byteRead = Serial.read();
+//            while(byteRead != '#') {
+//              received = received + String(byteRead);
+////              Serial.write(byteRead);
+//              byteRead = Serial.read();
+//            }
+//        }
+//    }
+    
+    String received = "";        
+    boolean stringComplete = false;
+    while (Serial.available()) {
+        // get the new byte:
+        char inChar = (char)Serial.read();
+        // add it to the inputString:
+        received += inChar;
+        // if the incoming character is a newline, set a flag
+        // so the main loop can do something about it:
+        if (inChar == '\n') {
+          Serial.println(received);
+        }
+    }
+    return received;
 }
 
