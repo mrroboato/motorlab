@@ -58,24 +58,18 @@ void checkForStateChange() {
     }
     motor_state = !motor_state;
   }
-  
-  while (Serial.available()) {
-//    byteRead = Serial.read();
-//    if (byteRead == '%') {
-//      motor_state = STATE_SENSOR;
-//      return;
-//    } else if (byteRead == '^') {
-//      motor_state = STATE_GUI;
-//      return;
-//    }
-      String received = readNextAvailableMessage();
-      if (received == "sensor") {
-        motor_state = STATE_SENSOR;
-      } else if (received == "gui") {
-        motor_state = STATE_GUI;
-      }
 
-      Serial.print("*" + received + "#");
+  static char buffer[80];
+  if (readline(Serial.read(), buffer, 80) > 0) {
+    Serial.println("*Read!!#");
+    if (buffer == "sensor") {
+      motor_state = STATE_SENSOR;
+    } else if (buffer == "gui") {
+      motor_state = STATE_GUI;
+    }
+    Serial.print("*You entered: >");
+    Serial.print(buffer);
+    Serial.println("<#");
   }
 }
 
@@ -110,9 +104,9 @@ void readSensors() {
 
 void readGui() {
   
-  while (Serial.available()) {
-    byteRead = Serial.read();
-  }
+//  while (Serial.available()) {
+//    byteRead = Serial.read();
+//  }
   
 }
 
@@ -172,33 +166,28 @@ float irDistance()
 }
 
 /* Utilities */
-String readNextAvailableMessage() {
-//    String received = String();
-//    while (Serial.available()) {
-//        byteRead = Serial.read();
-//        if (byteRead == '*') {
-//            byteRead = Serial.read();
-//            while(byteRead != '#') {
-//              received = received + String(byteRead);
-////              Serial.write(byteRead);
-//              byteRead = Serial.read();
-//            }
-//        }
-//    }
-    
-    String received = "";        
-    boolean stringComplete = false;
-    while (Serial.available()) {
-        // get the new byte:
-        char inChar = (char)Serial.read();
-        // add it to the inputString:
-        received += inChar;
-        // if the incoming character is a newline, set a flag
-        // so the main loop can do something about it:
-        if (inChar == '\n') {
-          Serial.println(received);
+int readline(int readch, char *buffer, int len) {
+  static int pos = 0;
+  int rpos;
+  
+  Serial.println("reading");
+
+  if (readch > 0) {
+    switch (readch) {
+      case '\n': // Ignore new-lines
+        break;
+      case '\r': // Return on CR
+        rpos = pos;
+        pos = 0;  // Reset position index ready for next time
+        return rpos;
+      default:
+        if (pos < len-1) {
+          buffer[pos++] = readch;
+          buffer[pos] = 0;
         }
     }
-    return received;
+  }
+  // No end of line has been found, so return -1.
+  return -1;
 }
 

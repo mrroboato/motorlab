@@ -84,11 +84,11 @@ func initServer() {
                     if motorVal == "false" {
                         // messageArray := [1]byte{STATE_SENSOR}
                         // message = messageArray[:]
-                        message = []byte("sensor")
+                        message = []byte("sensor\n")
                     } else {
                         // messageArray := [1]byte{STATE_GUI}
                         // message = messageArray[:]
-                        message = []byte("gui")
+                        message = []byte("gui\n")
                     }
                 } 
 
