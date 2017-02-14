@@ -14,6 +14,8 @@ import (
 
 const MESSAGE_BEGIN = "*"
 const MESSAGE_END = "#"
+const STATE_SENSOR = '%'
+const STATE_GUI = '^'
 
 var ValidSensors = [3]string{"Pot", "Enc", "Ir"}
 
@@ -72,10 +74,27 @@ func initServer() {
             _, p, err := socketCon.ReadMessage()
             handleError(err)
             log.Printf("%s\n", p);
-            if (serialCon != nil) {
+            if serialCon != nil {
                 log.Printf("Sending to arduino.");
-                _, err := serialCon.Write(p)
+                messageSlice := strings.Split(string(p), ":")
+                motorName := messageSlice[0]
+                motorVal := messageSlice[1]
+                message := p;
+                if motorName == "Switch" {
+                    if motorVal == "false" {
+                        // messageArray := [1]byte{STATE_SENSOR}
+                        // message = messageArray[:]
+                        message = []byte(MESSAGE_BEGIN + "sensor" + MESSAGE_END)
+                    } else {
+                        // messageArray := [1]byte{STATE_GUI}
+                        // message = messageArray[:]
+                        message = []byte(MESSAGE_BEGIN + "gui" + MESSAGE_END)
+                    }
+                } 
+
+                _, err = serialCon.Write(message)
                 handleError(err)
+
             } else {
                 log.Printf("Serial port nil.");
             }
@@ -109,6 +128,7 @@ func startSerial() {
 
         _, err := serialCon.Read(buf)
         handleError(err)
+        // log.Printf("%s", buf[0]);
 
         if string(buf[0]) == MESSAGE_BEGIN {
             _, err := serialCon.Read(buf)
@@ -122,7 +142,7 @@ func startSerial() {
             }
         }
 
-        // log.Printf("%q", received[1:])
+        log.Printf("%q", received[1:])
 
         if (socketCon != nil) {
             sendSensorInfo(received[1:])
