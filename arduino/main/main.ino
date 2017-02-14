@@ -8,8 +8,10 @@
 #define LIGHT_PIN (A3)
 #define SENSOR_PIN (A1)
 #define POT_PIN (A0)
+#define STATE_SENSOR (1)
+#define STATE_GUI (0)
 Servo ht_servo;
-int motor_state;
+int motor_state = STATE_GUI;
 
 #include "QuickStats.h"
 
@@ -30,8 +32,72 @@ void setup() {
   pinMode(POT_PIN, INPUT);
   pinMode(LIGHT_PIN, INPUT);
   
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  if(digitalRead(SWITCH_PIN) == HIGH)
+  {
+    while(digitalRead(SWITCH_PIN) == HIGH)
+    {
+      delay(100);
+    }
+    motor_state = !motor_state;
+    Serial.print("Motor State: ");
+    Serial.println(motor_state);
+  }
+
+  // Sensor Control
+  if (motor_state == STATE_SENSOR) {
+      sensor();  
+  } else if(motor_state == STATE_GUI) {
+      gui();
+  }
+
+}
+
+void sensor() {
+  
+    // Servo motor and potentiometer
+    float raw_pot = analogRead(POT_PIN);
+    float pot_val = (raw_pot / 1024) * 180;
+    servoControl(pot_val);
+
+    // DC motor and ir proximity sensor.
+    int pwr = irDistance()*2;
+    if(pwr < 40)
+    {
+      pwr = -pwr;
+    }
+    motorControl(pwr);
+    delay(100);
+
+    // Stepper motor and Stepper motor.
+    loat raw = analogRead(LIGHT_PIN);
+    float light_val = (raw/1024)*5;
+    if(light_val > 4.7)
+    {
+        stepperControl(HIGH);
+    }
+    else if(light_val < 4)
+    {
+        stepperControl(LOW);
+    }
+}
+
+void gui() {
+  
+  if (Serial.available()) {
+    byteRead = Serial.read();
+    Serial.write(byteRead);
+  }
+  
+}
+
+
+/* Motor Control Functions */
 
 void servoControl(int input) {
   ht_servo.write(input);
@@ -67,6 +133,9 @@ void motorControl(int speed)
   }
 }
 
+
+/* Sensor Read functions */
+
 float irDistance()
 {
   int n = 20; //window size
@@ -82,51 +151,3 @@ float irDistance()
   return distance;
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-
-  if(digitalRead(SWITCH_PIN) == HIGH)
-  {
-    while(digitalRead(SWITCH_PIN) == HIGH)
-    {
-      delay(100);
-    }
-    motor_state = !motor_state;
-    Serial.print("Motor State: ");
-    Serial.println(motor_state);
-  }
-  if (motor_state == 1)
-  {
-    float raw_pot = analogRead(POT_PIN);
-    float pot_val = (raw_pot / 1024) * 180;
-    servoControl(pot_val);
-  }
-
-  if(motor_state == 0)
-  {
-    Serial.println("Motor Off");
-    motorControl(0);
-  }
-  else
-  {
-    int pwr = irDistance()*2;
-    if(pwr < 40)
-    {
-      pwr = -pwr;
-    }
-    motorControl(pwr);
-    delay(100);
-  }
-  
-  float raw = analogRead(LIGHT_PIN);
-  float light_val = (raw/1024)*5;
-  if(light_val > 4.7)
-  {
-    stepperControl(HIGH);
-  }
-  else if(light_val < 4)
-  {
-    stepperControl(LOW);
-  }
-}
- 
