@@ -49,12 +49,14 @@
     <div class="divider"></div>
 
     <div class="row">
-        <div class="col s6 m6 l6">
+        <div class="col s9 m9 l9">
             <h4 class="main-heading">RC Servo</h4>
-            <h5 class="sub-heading">Potentiometer</h5>
-            <div id="potMonitor"> </div>
+            <div class="row">
+                <h5 class="sub-heading col l3">Potentiometer</h5>
+                <h5 id="potMonitor" class="sub-heading col l3"> </h5>
+            </div>
             <form action="#">
-                <p class="range-field">
+                <p class="range-field col s4 m4 l4">
                   <input type="range" id="servoSlider" min="0" max="180" step="1"/>
                 </p>
             </form>
@@ -64,12 +66,14 @@
     <div class="divider"></div>
 
     <div class="row">
-        <div class="col s6 m6 l6">
+        <div class="col s9 m9 l9">
             <h4 class="main-heading">DC Motor</h4>
-            <h5 class="sub-heading">IR Proximity Sensor</h5>
-            <div id="encoderMonitor"> </div>
+            <div class="row">
+                <h5 class="sub-heading col l3">IR Proximity Sensor</h5>
+                <h5 id="encoderMonitor" class="sub-heading col l3"> </h5>
+            </div>
             <form action="#">
-                <p class="range-field">
+                <p class="range-field col s4 m4 l4">
                   <input type="range" id="dcSlider" min="-100" max="100" step="1"/>
                 </p>
             </form>
@@ -81,8 +85,10 @@
     <div class="row">
         <div class="col s6 m6 l6">
             <h4 class="main-heading">Stepper Motor</h4>
-            <h5 class="sub-heading">Photoresistor</h5>
-            <div id="irMonitor"> </div>
+            <div class="row">
+                <h5 class="sub-heading col l3">Photoresistor</h5>
+                <div id="irMonitor" class="sub-heading col l3"> </div>
+            </div>
             <a class="waves-effect waves-light btn" id="stepperButton">
                 <i class="material-icons left">play_arrow</i>Flash Light
             </a>
