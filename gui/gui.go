@@ -28,7 +28,8 @@ var upgrader = websocket.Upgrader{
     WriteBufferSize: 1024,
 }
 
-var connection *websocket.Conn
+var serialCon *serial.Port 
+var socketCon *websocket.Conn
 
 func main() {
 
@@ -44,15 +45,18 @@ func main() {
         log.Printf("ERROR: Too many arguments!")
         return;
     }
-
     comport := commandlineArgs[1]
+
     log.Printf("Connect to localhost:2441 in your browser to see sensor data.")
+
+    // Init serial.
+    initSerial(comport)
 
     // Start server.
     go initServer()
 
     // Configure serial port and start listening.
-    initSerial(comport)
+    startSerial()
 }
 
 func initServer() {
@@ -61,14 +65,20 @@ func initServer() {
 
     // Websocket connection handler.
     http.HandleFunc("/websocket", func(w http.ResponseWriter, r *http.Request) {      
-        connection, err = upgrader.Upgrade(w, r, nil)
+        socketCon, err = upgrader.Upgrade(w, r, nil)
         log.Printf("Made connection to client.")
         handleError(err)
         for {
-            _, p, err := connection.ReadMessage()
+            _, p, err := socketCon.ReadMessage()
             handleError(err)
             log.Printf("%s\n", p);
-            // printByteBuffer(p)
+            if (serialCon != nil) {
+                log.Printf("Sending to arduino.");
+                _, err := serialCon.Write(p)
+                handleError(err)
+            } else {
+                log.Printf("Serial port nil.");
+            }
         }
     })
 
@@ -79,10 +89,14 @@ func initServer() {
 
 func initSerial(comport string) {
     log.Printf("Setting up serial port %s...", comport)
-
+    var err error
     c := &serial.Config{Name: comport, Baud: 115200}
-    s, err := serial.OpenPort(c)
+    serialCon, err = serial.OpenPort(c)
     handleError(err)
+}
+
+
+func startSerial() {
 
     // buf := make([]byte, 128)
     buf := make([]byte, 1)
@@ -93,24 +107,24 @@ func initSerial(comport string) {
 
     for {
 
-        _, err := s.Read(buf)
+        _, err := serialCon.Read(buf)
         handleError(err)
 
         if string(buf[0]) == MESSAGE_BEGIN {
-            _, err := s.Read(buf)
+            _, err := serialCon.Read(buf)
             handleError(err)
 
             for string(buf[0]) != MESSAGE_END {
                 received = append(received, buf...)
                 // log.Printf("%q", received);
-                _, err := s.Read(buf)
+                _, err := serialCon.Read(buf)
                 handleError(err)
             }
         }
 
         // log.Printf("%q", received[1:])
 
-        if (connection != nil) {
+        if (socketCon != nil) {
             sendSensorInfo(received[1:])
         } 
 
@@ -145,7 +159,7 @@ func sendSensorInfo(received []byte) {
     sensorJson, err := json.Marshal(sensorData)
     handleError(err)
 
-    err = connection.WriteMessage(websocket.TextMessage, sensorJson)
+    err = socketCon.WriteMessage(websocket.TextMessage, sensorJson)
     // log.Printf("Sending sensor info")
     handleError(err)
 }

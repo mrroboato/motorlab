@@ -1,4 +1,6 @@
 #include <Servo.h> 
+#include "QuickStats.h"
+
 #define SERVO_PIN (2)
 #define DC_L1 (9)
 #define DC_L2 (10)
@@ -12,8 +14,7 @@
 #define STATE_GUI (0)
 Servo ht_servo;
 int motor_state = STATE_GUI;
-
-#include "QuickStats.h"
+byte byteRead;
 
 QuickStats stats; 
 
@@ -75,7 +76,7 @@ void sensor() {
     delay(100);
 
     // Stepper motor and Stepper motor.
-    loat raw = analogRead(LIGHT_PIN);
+    float raw = analogRead(LIGHT_PIN);
     float light_val = (raw/1024)*5;
     if(light_val > 4.7)
     {
@@ -89,7 +90,7 @@ void sensor() {
 
 void gui() {
   
-  if (Serial.available()) {
+  while (Serial.available()) {
     byteRead = Serial.read();
     Serial.write(byteRead);
   }

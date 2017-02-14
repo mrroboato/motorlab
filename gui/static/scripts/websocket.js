@@ -38,7 +38,7 @@ $(document).ready(function() {
         photoMonitor.text(connectionClosedText);
     };
 
-    toggleControls(false);
+    toggleControls(true);
 
     $('#controlModeSwitch').change(function() { onSwitchClick(); }); 
     $("#servoSlider").on("input change", function() { sendServoData(); });
