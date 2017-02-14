@@ -38,28 +38,39 @@ $(document).ready(function() {
         irMonitor.text(connectionClosedText);
     };
 
+    $('#controlModeSwitch').change(function() { sendSwitchData(); }); 
     $("#servoSlider").on("input change", function() { sendServoData(); });
     $("#dcSlider").on("input change", function() { sendDCData(); });
     $('#stepperButton').attr('href','javascript:sendStepperData()');
 });
 
+var sendSwitchData = function() {
+    if(socket.readyState === socket.OPEN) {
+        var switchVal = $('#controlModeSwitch').val();
+        socket.send('Switch: ' + switchVal.toString());
+        // console.log("Switch message sent");
+    }
+}
+
 var sendServoData = function() {
-    if(socket.readyState === socket.OPEN){
-       socket.send('Servo');
-       console.log("Servo message sent");
+    if(socket.readyState === socket.OPEN) {
+        var servoVal = $('#servoSlider').val();
+        socket.send('Servo: ' + servoVal.toString());
+        // console.log("Servo message sent");
     }
 }
 
 var sendDCData = function() {
-    if(socket.readyState === socket.OPEN){
-       socket.send('DC');
-       console.log("DC message sent");
+    if(socket.readyState === socket.OPEN) {
+        var dcVal = $('#dcSlider').val();
+        socket.send('DC: ' + dcVal.toString());
+        // console.log("DC message sent");
     }
 }
 
 var sendStepperData = function() {
-    if(socket.readyState === socket.OPEN){
-       socket.send('Stepper');
+    if(socket.readyState === socket.OPEN) {
+        socket.send('Stepper');
     }
 }
 
