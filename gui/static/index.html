@@ -10,8 +10,9 @@
 </head>
 
 <body>
+<div class="container">
     <div class="row">
-        <div class="col s2 m4 l3">
+        <div class="col s12 m12 l12">
             <h2 class="title">Motor Lab</h2>
         </div>
     </div>
@@ -19,23 +20,38 @@
     <div class="divider"></div>
 
     <!-- Switch -->
-    <div class="switchMargin col s2 m4 l3">
-        <div class="switch">
+<!--     <div class="switchMargin col s12 m12 l12">
+ --><!--         <div class="switch">
             <label>
-              <b class="control-mode">Sensor Control</b>
-              <input type="checkbox" id="controlModeSwitch">
-              <span class="lever"></span>
-              <b class="control-mode">GUI Control</b>
+                <div class="row"> 
+                  <h4 class="control-mode col s3 m2 l4">Sensor Control</h4>
+                  <input type="checkbox" id="controlModeSwitch">
+                  <span class="lever"></span>
+                  <h4 class="control-mode col s2 m2 l4">GUI Control</h4>
+                </div>
             </label>
+        </div> -->
+
+        <div class="row">
+                <label class="main-heading"> <h4> Input State Switch </h4> </label>
+                <div class="switch">
+                    <label>
+                        <b class="sub-heading col">Sensor Control</b>
+                        <input type="checkbox" id="controlModeSwitch" class="col">
+                        <span class="lever col"></span>
+                        <b class="sub-heading col">GUI Control</b>
+                    </label>
+                </div> 
         </div>
-    </div>
+
+<!--     </div> -->
 
     <div class="divider"></div>
 
     <div class="row">
-        <div class="col s2 m4 l3">
-            <h4 class="motor-name">RC Servo</h4>
-            <h5 class="sensor-name">Potentiometer</h5>
+        <div class="col s6 m6 l6">
+            <h4 class="main-heading">RC Servo</h4>
+            <h5 class="sub-heading">Potentiometer</h5>
             <div id="potMonitor"> </div>
             <form action="#">
                 <p class="range-field">
@@ -48,9 +64,9 @@
     <div class="divider"></div>
 
     <div class="row">
-        <div class="col s2 m4 l3">
-            <h4 class="motor-name">DC Motor</h4>
-            <h5 class="sensor-name">IR Proximity Sensor</h5>
+        <div class="col s6 m6 l6">
+            <h4 class="main-heading">DC Motor</h4>
+            <h5 class="sub-heading">IR Proximity Sensor</h5>
             <div id="encoderMonitor"> </div>
             <form action="#">
                 <p class="range-field">
@@ -63,9 +79,9 @@
     <div class="divider"></div>
 
     <div class="row">
-        <div class="col s2 m4 l3">
-            <h4 class="motor-name">Stepper Motor</h4>
-            <h5 class="sensor-name">Photoresistor</h5>
+        <div class="col s6 m6 l6">
+            <h4 class="main-heading">Stepper Motor</h4>
+            <h5 class="sub-heading">Photoresistor</h5>
             <div id="irMonitor"> </div>
             <a class="waves-effect waves-light btn" id="stepperButton">
                 <i class="material-icons left">play_arrow</i>Flash Light
@@ -73,12 +89,12 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"/></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
     <script src="http://threejs.org/build/three.min.js"></script>
     <script src="http://threejs.org/examples/js/loaders/OBJLoader.js"></script>
     <script type="text/javascript" src="scripts/websocket.js"></script>
-
+</div>
 </body>
 
 </html>

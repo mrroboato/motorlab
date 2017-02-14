@@ -4,20 +4,17 @@
 	color: #263238; 
 }
 
-.motor-name {
+.main-heading {
     color: #263238;
 }
 
-.sensor-name {
+.sub-heading {
     color: #616161;
 }
 
-.control-mode {
-    color: #263238;
-}
-
 .switchMargin {
-    margin: 32px;
+    margin-top: 32px;
+    margin-bottom: 32px;
 }
 
 .range-min {
