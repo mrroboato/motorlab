@@ -15,13 +15,13 @@ $(document).ready(function() {
 
         var irMonitor = $('#irMonitor');
         // ultMonitor.text(sensorData['Ult']);
-        irData = sensorData['Enc'].split(";");
+        irData = sensorData['Ir'];
         // console.log(imuData);
         // console.log("%d, %d, %d", imuData[0],imuData[1], imuData[2]);
-        irMonitor.text(irData['Enc']);
+        irMonitor.text(irData);
 
         var photoMonitor = $('#photoMonitor');
-        photoMonitor.text(sensorData['Ir']);
+        photoMonitor.text(sensorData['Pho']);
     };
 
     socket.onclose = function() {

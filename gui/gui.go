@@ -17,12 +17,12 @@ const MESSAGE_END = "#"
 const STATE_SENSOR = '%'
 const STATE_GUI = '^'
 
-var ValidSensors = [3]string{"Pot", "Enc", "Ir"}
+var ValidSensors = [3]string{"Pot", "Ir", "Pho"}
 
 type SensorData struct {
     Pot int
-    Enc string
     Ir  int
+    Pho int
 } 
 
 var upgrader = websocket.Upgrader{
@@ -152,7 +152,7 @@ func startSerial() {
             }
         }
 
-        log.Printf("%q", received[1:])
+        // log.Printf("%q", received[1:])
 
         if (socketCon != nil) {
             sendSensorInfo(received[1:])
@@ -174,14 +174,11 @@ func sendSensorInfo(received []byte) {
         sensorName := parsed[0]
         if isValidSensorName(sensorName) && len(parsed) == 2 {
             sensorNameField := reflect.ValueOf(&sensorData).Elem().FieldByName(sensorName)
-            if sensorName == "Enc" {
-                sensorNameField.SetString(parsed[1])
-            } else {
-                sensorVal, err := strconv.Atoi(parsed[1])
-                if err == nil {
-                    sensorNameField.SetInt(int64(sensorVal))
-                }
+            sensorVal, err := strconv.Atoi(parsed[1])
+            if err == nil {
+                sensorNameField.SetInt(int64(sensorVal))
             }
+            
             // log.Printf("%s: %i", sensorName, sensorVal)
         } 
     }  

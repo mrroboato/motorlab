@@ -83,11 +83,10 @@ void loop() {
     } 
 
     // Set Motors
-    servoControl(servo_input);
+//    servoControl(servo_input);
     motorControl(dc_input);
-    stepperControl(stepper_input);
-    delay(50
-    );
+//    stepperControl(stepper_input);
+    delay(50);
     
 }
 
@@ -168,6 +167,8 @@ void readSensors() {
     {
         stepper_input = LOW;
     }
+
+    sendSensorData(servo_input, dc_input, light_val);
 }
 
 float irDistance()
@@ -207,5 +208,11 @@ int readline(int readch, char *buffer, int len) {
   }
   // No end of line has been found, so return -1.
   return -1;
+}
+
+void sendSensorData(int pot, int ir, int pho) {
+    char messageBuf[50];
+    sprintf(messageBuf, "*Pot:%d,Ir:%d,Pho:%d#", pot, ir, pho);
+    Serial.write(messageBuf);
 }
 
