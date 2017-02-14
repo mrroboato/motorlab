@@ -168,11 +168,3 @@ func isValidSensorName(name string) bool {
     }
     return false
 }
-
-func printByteBuffer(s []byte) {
-    log.Printf("Received b:");
-    for n := 0;n < len(s);n++ {
-        log.Printf("%d,",s[n]);
-    }
-    log.Printf("\n");
-}

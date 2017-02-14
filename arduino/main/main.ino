@@ -1,80 +1,132 @@
-// main.ino
+#include <Servo.h> 
+#define SERVO_PIN (2)
+#define DC_L1 (9)
+#define DC_L2 (10)
+#define SWITCH_PIN (6)
+#define STEP_PIN (12)
+#define DIR_PIN (13)
+#define LIGHT_PIN (A3)
+#define SENSOR_PIN (A1)
+#define POT_PIN (A0)
+Servo ht_servo;
+int motor_state;
 
-#include <string.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
 #include "QuickStats.h"
 
-QuickStats stats;
-Adafruit_BNO055 bno = Adafruit_BNO055(55);
-
-byte byteRead;
-char imuData[20];
-
-int potPin = 1; // Potentiometer input pin.
-// SCL = 3; // IMU input pin.
-// SDA = 3; // IMU input pin.
-int irPin = 2; // Ir proximity sensor input pin.
+QuickStats stats; 
 
 void setup() {
+  // put your setup code here, to run once:
 
-    if(!bno.begin()) {
-      /* There was a problem detecting the BNO055 ... check your connections */
-      Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-      while(1);
-    } 
+  ht_servo.attach(SERVO_PIN);
+  pinMode(DC_L1, OUTPUT);
+  pinMode(DC_L2, OUTPUT);
+  pinMode(SENSOR_PIN, INPUT);
 
-    sensor_t sensor;
-    bno.getSensor(&sensor);
+  pinMode(STEP_PIN, OUTPUT);     
+  pinMode(DIR_PIN, OUTPUT);
+  digitalWrite(STEP_PIN, LOW);
+  digitalWrite(DIR_PIN, LOW);
+  pinMode(POT_PIN, INPUT);
+  pinMode(LIGHT_PIN, INPUT);
   
-    Serial.begin(115200);
+  Serial.begin(9600);
+}
+
+void servoControl(int input) {
+  ht_servo.write(input);
+}
+
+void stepperControl(int dir)
+{
+  digitalWrite(DIR_PIN, dir);  
+  for (int i=0; i <= 2500; i++){
+    digitalWrite(STEP_PIN, HIGH);
+    delayMicroseconds(50);          
+    digitalWrite(STEP_PIN, LOW); 
+    delayMicroseconds(50);
+  }
+}
+
+void motorControl(int speed)
+{
+  if(speed > 0)
+  {
+    digitalWrite(DC_L1, speed);
+    digitalWrite(DC_L2, LOW);
+  }
+  else if(speed < 0)
+  {
+    digitalWrite(DC_L1, LOW);
+    digitalWrite(DC_L2, -speed);
+  }
+  else
+  {
+    digitalWrite(DC_L1, LOW);
+    digitalWrite(DC_L2, LOW);
+  }
+}
+
+float irDistance()
+{
+  int n = 20; //window size
+  float sig[n];
+  
+  for (int i=0; i<n; i++){
+    sig[i] = analogRead(SENSOR_PIN);
+  }
+
+  float x = stats.median(sig,n);
+  float distance = .00036008*x*x - .28975*x + 68.567;
+  Serial.println(distance);
+  return distance;
 }
 
 void loop() {
-    int pot = readPotentiometer();
-    readImuSensor();
-    int ir = readIRProximitySensor();
+  // put your main code here, to run repeatedly:
 
-    sendSensorData(pot, imuData, ir);
-    delay(50);
-}
-
-void sendSensorData(int pot, char *imu, int ir) {
-    char messageBuf[50];
-    sprintf(messageBuf, "*Pot:%d,Imu:%s,Ir:%d#", pot, imu, ir);
-    Serial.write(messageBuf);
-}
-
-int readPotentiometer() {
-    return analogRead(potPin); 
-}
-
-char *readImuSensor() {
-    sensors_event_t event;
-    bno.getEvent(&event);
-
-    int orient_x = (int)event.orientation.x;
-    int orient_y = (int)event.orientation.y;
-    int orient_z = (int)event.orientation.z;
-    
-//    uint8_t sys, gyro, accel, mag = 0;
-//    bno.getCalibration(&sys, &gyro, &accel, &mag);
-    
-//    sprintf(imuData, "%d;%d;%d;%d;%d;%d;%d", orient_x, orient_y, orient_z, sys, gyro, accel, mag);
-      sprintf(imuData, "%d;%d;%d;", orient_x, orient_y, orient_z);
-}
-
-int readIRProximitySensor() {
-    int n = 20; //window size
-    float sig[n];
-    
-    for (int i=0; i<n; i++){
-      sig[i] = analogRead(irPin);
+  if(digitalRead(SWITCH_PIN) == HIGH)
+  {
+    while(digitalRead(SWITCH_PIN) == HIGH)
+    {
+      delay(100);
     }
+    motor_state = !motor_state;
+    Serial.print("Motor State: ");
+    Serial.println(motor_state);
+  }
+  if (motor_state == 1)
+  {
+    float raw_pot = analogRead(POT_PIN);
+    float pot_val = (raw_pot / 1024) * 180;
+    servoControl(pot_val);
+  }
+
+  if(motor_state == 0)
+  {
+    Serial.println("Motor Off");
+    motorControl(0);
+  }
+  else
+  {
+    int pwr = irDistance()*2;
+    if(pwr < 40)
+    {
+      pwr = -pwr;
+    }
+    motorControl(pwr);
+    delay(100);
+  }
   
-    float x = stats.median(sig,n);
-    float distance = .00036008*x*x - .28975*x + 68.567;
-
-    return distance;
+  float raw = analogRead(LIGHT_PIN);
+  float light_val = (raw/1024)*5;
+  if(light_val > 4.7)
+  {
+    stepperControl(HIGH);
+  }
+  else if(light_val < 4)
+  {
+    stepperControl(LOW);
+  }
 }
-
+ 
