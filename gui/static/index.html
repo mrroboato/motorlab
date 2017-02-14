@@ -33,15 +33,17 @@
         </div> -->
 
         <div class="row">
+            <div class="col s9 m9 l9">
                 <label class="main-heading"> <h4> Input State Switch </h4> </label>
                 <div class="switch">
                     <label>
                         <b class="sub-heading col">Sensor Control</b>
-                        <input type="checkbox" id="controlModeSwitch" class="col">
+                        <input disabled type="checkbox" id="controlModeSwitch" class="col">
                         <span class="lever col"></span>
                         <b class="sub-heading col">GUI Control</b>
                     </label>
                 </div> 
+            </div>
         </div>
 
 <!--     </div> -->
@@ -51,9 +53,9 @@
     <div class="row">
         <div class="col s9 m9 l9">
             <h4 class="main-heading">RC Servo</h4>
-            <div class="row">
-                <h5 class="sub-heading col l3">Potentiometer</h5>
-                <h5 id="potMonitor" class="sub-heading col l3"> </h5>
+            <div class="row" id="potMonitorContainer">
+                <h5 class="sub-heading col s4 m4 l4" id="potMonitorLabel" >Potentiometer</h5>
+                <h5 class="sub-heading col s3 m3 l3" id="potMonitor" > </h5>
             </div>
             <form action="#">
                 <p class="range-field col s4 m4 l4">
@@ -68,9 +70,9 @@
     <div class="row">
         <div class="col s9 m9 l9">
             <h4 class="main-heading">DC Motor</h4>
-            <div class="row">
-                <h5 class="sub-heading col l3">IR Proximity Sensor</h5>
-                <h5 id="encoderMonitor" class="sub-heading col l3"> </h5>
+            <div class="row" id="irMonitorContainer">
+                <h5 class="sub-heading col s4 m4 l4" id="encoderMonitorLabel" >IR Proximity Sensor</h5>
+                <h5 class="sub-heading col s3 m3 l3" id="encoderMonitor" > </h5>
             </div>
             <form action="#">
                 <p class="range-field col s4 m4 l4">
@@ -85,9 +87,9 @@
     <div class="row">
         <div class="col s6 m6 l6">
             <h4 class="main-heading">Stepper Motor</h4>
-            <div class="row">
-                <h5 class="sub-heading col l3">Photoresistor</h5>
-                <div id="irMonitor" class="sub-heading col l3"> </div>
+            <div class="row" id="photoMonitorContainer">
+                <h5 class="sub-heading col s4 m4 l4" id="photoMonitorLabel">Photoresistor</h5>
+                <div class="sub-heading col s3 m3 l3" id="photoMonitor"> </div>
             </div>
             <a class="waves-effect waves-light btn" id="stepperButton">
                 <i class="material-icons left">play_arrow</i>Flash Light

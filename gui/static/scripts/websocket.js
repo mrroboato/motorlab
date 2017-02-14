@@ -20,8 +20,8 @@ $(document).ready(function() {
         // console.log("%d, %d, %d", imuData[0],imuData[1], imuData[2]);
         encoderMonitor.text(sensorData['Enc']);
 
-        var irMonitor = $('#irMonitor');
-        irMonitor.text(sensorData['Ir']);
+        var photoMonitor = $('#photoMonitor');
+        photoMonitor.text(sensorData['Ir']);
     };
 
     socket.onclose = function() {
@@ -34,19 +34,28 @@ $(document).ready(function() {
         var encoderMonitor = $('#encoderMonitor');
         encoderMonitor.text(connectionClosedText);
 
-        var irMonitor = $('#irMonitor');
-        irMonitor.text(connectionClosedText);
+        var photoMonitor = $('#photoMonitor');
+        photoMonitor.text(connectionClosedText);
     };
 
-    $('#controlModeSwitch').change(function() { sendSwitchData(); }); 
+    toggleControls(false);
+
+    $('#controlModeSwitch').change(function() { onSwitchClick(); }); 
     $("#servoSlider").on("input change", function() { sendServoData(); });
     $("#dcSlider").on("input change", function() { sendDCData(); });
     $('#stepperButton').attr('href','javascript:sendStepperData()');
 });
 
-var sendSwitchData = function() {
+
+var onSwitchClick = function() {
+    var switchVal = $('#controlModeSwitch').prop('checked');
+    toggleControls(switchVal);
+    sendSwitchData(switchVal);
+}
+
+
+var sendSwitchData = function(switchVal) {
     if(socket.readyState === socket.OPEN) {
-        var switchVal = $('#controlModeSwitch').prop('checked');
         socket.send('Switch: ' + switchVal.toString());
         // console.log("Switch message sent");
     }
@@ -75,3 +84,37 @@ var sendStepperData = function() {
 }
 
 
+var toggleControls = function(switchVal) {
+    if (switchVal) {
+        hideSensorMonitors();
+        showMotorControls();
+    } else {
+        showSensorMonitors();
+        hideMotorControls();
+    }
+}
+
+
+var hideSensorMonitors = function() {
+    $('#potMonitorContainer').hide();
+    $('#irMonitorContainer').hide();
+    $('#photoMonitorContainer').hide();
+}
+
+var showSensorMonitors = function() {
+    $('#potMonitorContainer').show();
+    $('#irMonitorContainer').show();
+    $('#photoMonitorContainer').show();
+}
+
+var hideMotorControls = function() {
+    $('#servoSlider').hide();
+    $('#dcSlider').hide();
+    $('#stepperButton').hide();
+}
+
+var showMotorControls = function() {
+    $('#servoSlider').show();
+    $('#dcSlider').show();
+    $('#stepperButton').show();
+}
