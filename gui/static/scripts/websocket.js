@@ -48,6 +48,7 @@ $(document).ready(function() {
     toggleControls(0);
 
     $('#controlModeSwitch').change(function() { onSwitchClick(); }); 
+    $('#dcModeSwitch').change(function() { onDCSwitchClick(); }); 
     $("#servoSlider").on("change", function() { sendServoData(); });
     $("#dcSlider").on("change", function() { sendDCData(); });
     $('#stepperRunButton').attr('href','javascript:sendStepperRunData()');
@@ -61,10 +62,22 @@ var onSwitchClick = function() {
     sendSwitchData(switchVal);
 }
 
+var onDCSwitchClick = function() {
+    var switchVal = $('#dcModeSwitch').prop('checked');
+    sendDCSwitchData(switchVal);
+}  
+
 
 var sendSwitchData = function(switchVal) {
     if(socket.readyState === socket.OPEN) {
         socket.send('switch:' + switchVal.toString());
+        // console.log("Switch message sent");
+    }
+}
+
+var sendDCSwitchData = function(switchVal) {
+    if(socket.readyState === socket.OPEN) {
+        socket.send('switch_dc:' + switchVal.toString());
         // console.log("Switch message sent");
     }
 }
@@ -109,6 +122,20 @@ var toggleControls = function(switchVal) {
     }
 }
 
+var changeDCMode = function(switchVal) {
+    if (switchVal) {
+        $('#dcSlider').prop({
+            'min': -100,
+            'max': 100
+        });
+    } else {
+        $('#dcSlider').prop({
+            'min': 0,
+            'max': 360
+        });
+    }
+}
+
 
 var hideSensorMonitors = function() {
     $('#potMonitorContainer').hide();
@@ -127,6 +154,7 @@ var hideMotorControls = function() {
     $('#dcSlider').hide();
     $('#stepperRunButton').hide();
     $('#stepperStopButton').hide();
+    $('#dcModeSwitchContainer').hide();
 }
 
 var showMotorControls = function() {
@@ -134,4 +162,5 @@ var showMotorControls = function() {
     $('#dcSlider').show();
     $('#stepperRunButton').show();
     $('#stepperStopButton').show();
+    $('#dcModeSwitchContainer').show();
 }

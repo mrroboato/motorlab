@@ -12,15 +12,21 @@
 #define POT_PIN (A0)
 #define STATE_SENSOR (0)
 #define STATE_GUI (1)
+#define STATE_VAL (2)
+#define STATE_POS (3)
 Servo ht_servo;
-int motor_state = STATE_SENSOR;
+
 byte byteRead;
 
+int motor_state = STATE_VAL;
+int dc_state = STATE_POS;
 boolean update_dc = false;
 
 int servo_input;
 int dc_input;
 int stepper_input;
+
+int stepper_run = 0;
 
 QuickStats stats; 
 
@@ -64,6 +70,10 @@ void loop() {
             } else if (strcmp(motorVal, "1") == 0) {
                 motor_state = STATE_GUI;
 //                Serial.println("*Motor State: GUI#");
+            } else if (strcmp(motorVal, "2") == 0) {
+                dc_state = STATE_VEL;
+            } else if (strcmp(motorVal, "3") == 0) {
+                dc_state = STATE_POS:
             }
         } else if (motor_state == STATE_GUI) { // We read from serial, so might as well.
             if (strcmp(motorName, "servo") == 0) {
@@ -77,7 +87,14 @@ void loop() {
                 }
 //                Serial.println("*DC Input: " + String(motorVal) + "#");
             } else if (strcmp(motorName, "stepper") == 0) {
-                stepper_input = atoi(motorVal);
+                int received_stepper_input = atoi(motorVal);
+                if (received_stepper_input == 0) {
+                    stepper_input = LOW;
+                    stepper_run = 1;
+                } else {
+                    stepper_input = HIGH;
+                    stepper_run = 1;
+                }
 //                Serial.println("*Stepper Input: " + String(motorVal) + "#");
             }
         }
@@ -88,13 +105,16 @@ void loop() {
         readSensors();  
     } 
 
-    // Set Motors
+    // Control Motors
     servoControl(servo_input);
     if (update_dc) {
         motorControl(dc_input); 
         update_dc = false;
     }
-//    stepperControl(stepper_input);
+
+    if (stepper_run) {
+        stepperControl(stepper_input);
+    }
     delay(50);
     
 }
@@ -175,10 +195,14 @@ void readSensors() {
     if(light_val > 4.7)
     {
         stepper_input = HIGH;
+        stepper_run = 1;
     }
-    else if(light_val < 4)
+    else if(light_val < 3.5)
     {
         stepper_input = LOW;
+        stepper_run = 1;
+    } else {
+        stepper_run = 0;
     }
 
     sendSensorData(servo_input, dc_input, light_val*100);

@@ -102,6 +102,17 @@ func initServer() {
                         message = []byte("state:1\r")
                     }
 
+                case "switch_dc":
+                    if motorVal == "false" {
+                        // messageArray := [1]byte{STATE_SENSOR}
+                        // message = messageArray[:]
+                        message = []byte("state:2\r")
+                    } else {
+                        // messageArray := [1]byte{STATE_GUI}
+                        // message = messageArray[:]
+                        message = []byte("state:3\r")
+                    }
+
                 case "servo":
                     message = []byte("servo:" + string(motorVal) + "\r")
 
