@@ -14,17 +14,24 @@
 #define STATE_GUI (1)
 #define STATE_VEL (2)
 #define STATE_POS (3)
+int encoder0PinA = 3;
+int encoder0PinB = 4;
+int encoder0Pos = 0;
+
 Servo ht_servo;
 
 byte byteRead;
 
 int motor_state = STATE_SENSOR;
-int dc_state = STATE_POS;
+int dc_state = STATE_VEL;
 boolean update_dc = false;
 
 int servo_input;
 int dc_input;
 int stepper_input;
+int encoder0PinALast = LOW;
+int n = LOW;
+double pos_percent;
 
 int stepper_run = 0;
 
@@ -44,6 +51,9 @@ void setup() {
   digitalWrite(DIR_PIN, LOW);
   pinMode(POT_PIN, INPUT);
   pinMode(LIGHT_PIN, INPUT);
+
+  pinMode (encoder0PinA,INPUT);
+  pinMode (encoder0PinB,INPUT);
   
   Serial.begin(115200);
 }
@@ -110,10 +120,19 @@ void loop() {
 
     // Control Motors
     servoControl(servo_input);
-    if (update_dc) {
-        motorControl(dc_input); 
-        update_dc = false;
-    }
+//    if (update_dc) {
+        if (dc_state == STATE_VEL) {
+            if (motor_state == STATE_SENSOR) {
+                digitalMotorControl(dc_input);
+            } else {
+                digitalMotorControl(dc_input);
+            }
+        } else {
+            pos_percent = ((double) encoder0Pos)*360/ 180.0;
+            pcontrol(dc_input,pos_percent); 
+        }
+//        update_dc = false;
+//    }
 
     if (stepper_run) {
         stepperControl(stepper_input);
@@ -152,25 +171,62 @@ void stepperControl(int dir)
   }
 }
 
-void motorControl(int speed)
+
+void analogMotorControl(int speed)
 {
-  if(speed > 0)
-  {
-    digitalWrite(DC_L1, speed);
-    digitalWrite(DC_L2, LOW);
-  }
-  else if(speed < 0)
-  {
-    digitalWrite(DC_L1, LOW);
-    digitalWrite(DC_L2, -speed);
-  }
-  else
-  {
-    digitalWrite(DC_L1, LOW);
-    digitalWrite(DC_L2, LOW);
-  }
+
+ if(speed > 0)
+ {
+   speed = min(speed,255);
+   analogWrite(DC_L1, speed);
+   digitalWrite(DC_L2, LOW);
+ }
+ else if(speed < 0)
+ {
+   speed = max(speed,-255);
+   digitalWrite(DC_L1, LOW);
+   analogWrite(DC_L2, -speed);
+ }
+ else
+ {
+   digitalWrite(DC_L1, LOW);
+   digitalWrite(DC_L2, LOW);
+ }
+ Serial.println("*"+String(speed)+"#");
 }
 
+
+void digitalMotorControl(int speed)
+{
+
+ if(speed > 0)
+ {
+//   speed = min(speed,127);
+   digitalWrite(DC_L1, speed);
+   digitalWrite(DC_L2, LOW);
+ }
+ else if(speed < 0)
+ {
+//   speed = max(speed,-127);
+   digitalWrite(DC_L1, LOW);
+   digitalWrite(DC_L2, -speed);
+ }
+ else
+ {
+   digitalWrite(DC_L1, LOW);
+   digitalWrite(DC_L2, LOW);
+ }
+}
+void pcontrol(double set_point, double pos)
+{
+   //Serial.println (pos);
+   double error = pos - set_point;
+   int Gain = 10;
+   int CE = Gain * ((int) error);
+//   Serial.println ("*" + String(CE) + "#");
+   analogMotorControl(-CE);
+//   Serial.println ("*dddddd" + String(error) + "#");
+}
 
 /* Sensor Read functions */
 
@@ -185,11 +241,21 @@ void readSensors() {
     int pwr = irDistance()*2;
     if(pwr < 40)
     {
-      pwr = -pwr;
+      pwr = -pwr*3;
     }
     if (pwr != dc_input) {
         dc_input = pwr;
+//        Serial.println(dc_input);
         update_dc = true;
+    }
+
+    n = digitalRead(encoder0PinA);
+    if ((encoder0PinALast == LOW) && (n == HIGH)) {
+      if (digitalRead(encoder0PinB) == LOW) {
+        encoder0Pos--;
+      } else {
+        encoder0Pos++;
+      }
     }
 
     // Stepper motor and Stepper motor.
