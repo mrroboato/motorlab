@@ -28,7 +28,7 @@ $(document).ready(function() {
         irMonitor.text(irData);
 
         var photoMonitor = $('#photoMonitor');
-        photoMonitor.text(receivedData['Pho']);
+        photoMonitor.text(receivedData['Pho']/100);
     };
 
     socket.onclose = function() {

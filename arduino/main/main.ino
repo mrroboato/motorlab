@@ -90,11 +90,11 @@ void loop() {
 
     // Set Motors
 //    servoControl(servo_input);
-    if (update_dc) {
-        motorControl(dc_input); 
-        update_dc = false;
-    }
-//    stepperControl(stepper_input);
+//    if (update_dc) {
+//        motorControl(dc_input); 
+//        update_dc = false;
+//    }
+    stepperControl(stepper_input);
     delay(50);
     
 }
@@ -181,7 +181,7 @@ void readSensors() {
         stepper_input = LOW;
     }
 
-    sendSensorData(servo_input, dc_input, light_val);
+    sendSensorData(servo_input, dc_input, light_val*100);
 }
 
 float irDistance()
