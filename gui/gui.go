@@ -20,10 +20,16 @@ const STATE_GUI = '^'
 var ValidSensors = [3]string{"Pot", "Ir", "Pho"}
 
 type SensorData struct {
+    Type string
     Pot int
     Ir  int
     Pho int
 } 
+
+type StateData struct {
+    Type string
+    State int 
+}
 
 var upgrader = websocket.Upgrader{
     ReadBufferSize: 1024,
@@ -32,6 +38,8 @@ var upgrader = websocket.Upgrader{
 
 var serialCon *serial.Port 
 var socketCon *websocket.Conn
+
+var state int
 
 func main() {
 
@@ -42,14 +50,16 @@ func main() {
             "ERROR: Specify port name.\n" + 
             "On mac or linux, you can search for available COM ports with 'ls /dev/tty.*'.\n" + 
             "On Windows, go to Control Panel > Device Manager.\n\n")
-        return;
+        return
     } else if (len(commandlineArgs) > 2) {
         log.Printf("ERROR: Too many arguments!")
-        return;
+        return
     }
     comport := commandlineArgs[1]
 
     log.Printf("Connect to localhost:2441 in your browser to see sensor data.")
+
+    state = 0
 
     // Init serial.
     initSerial(comport)
@@ -73,13 +83,13 @@ func initServer() {
         for {
             _, p, err := socketCon.ReadMessage()
             handleError(err)
-            // log.Printf("%s\n", p);
+            // log.Printf("%s\n", p)
             if serialCon != nil {
-                // log.Printf("Sending to arduino.");
+                // log.Printf("Sending to arduino.")
                 messageSlice := strings.Split(string(p), ":")
                 motorName := messageSlice[0]
                 motorVal := messageSlice[1]
-                message := p;
+                message := p
                 switch motorName {
                 case "switch":
                     if motorVal == "false" {
@@ -106,7 +116,7 @@ func initServer() {
                 handleError(err)
 
             } else {
-                log.Printf("Serial port nil.");
+                log.Printf("Serial port nil.")
             }
         }
     })
@@ -138,7 +148,7 @@ func startSerial() {
 
         _, err := serialCon.Read(buf)
         handleError(err)
-        // log.Printf("%s", buf[0]);
+        // log.Printf("%s", buf[0])
 
         if string(buf[0]) == MESSAGE_BEGIN {
             _, err := serialCon.Read(buf)
@@ -146,7 +156,7 @@ func startSerial() {
 
             for string(buf[0]) != MESSAGE_END {
                 received = append(received, buf...)
-                // log.Printf("%q", received);
+                // log.Printf("%q", received)
                 _, err := serialCon.Read(buf)
                 handleError(err)
             }
@@ -155,7 +165,16 @@ func startSerial() {
         // log.Printf("%q", received[1:])
 
         if (socketCon != nil) {
-            sendSensorInfo(received[1:])
+            if string(received) == "state-toggle" {
+                if state == 0 { 
+                    state = 1
+                } else {
+                    state = 0
+                }
+                sendStateInfo(state)
+            } else {
+                sendSensorInfo(received[1:])
+            }
         } 
 
         received = make([]byte, 1)
@@ -166,7 +185,7 @@ func sendSensorInfo(received []byte) {
     // log.Printf("%s", received)
     messageSlice := strings.Split(string(received), ",")
 
-    sensorData := SensorData{}
+    sensorData := SensorData{Type:"sensorData"}
 
     for _, message := range messageSlice {
         parsed := strings.Split(message, ":")
@@ -191,8 +210,19 @@ func sendSensorInfo(received []byte) {
     handleError(err)
 }
 
+func sendStateInfo(state int) {
+    stateData := StateData{Type:"stateData", State: state} 
+
+    stateJson, err := json.Marshal(stateData)
+    handleError(err)
+
+    err = socketCon.WriteMessage(websocket.TextMessage, stateJson)
+    // log.Printf("Sending sensor info")
+    handleError(err)
+}
+
 func receiveSensorData(sensorName string, senorValue int) {
-    log.Printf("sensorName: %s, senorValue: %d\n", sensorName, senorValue);
+    log.Printf("sensorName: %s, senorValue: %d\n", sensorName, senorValue)
 }
 
 func handleError(err error) {

@@ -98,6 +98,7 @@ void checkSwitch() {
         delay(100);
       }
       motor_state = !motor_state;
+      Serial.println("*state-toggle#");
     }  
 }
 

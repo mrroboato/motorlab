@@ -8,6 +8,12 @@ $(document).ready(function() {
 
     	sensorData = JSON.parse(evt.data);
 
+        if (sensorData['Type'] == 'stateData') {
+            isGUIState = sensorData['State'] == 1;
+            toggleControls(isGUIState);
+            return;
+        }
+
         // console.log(sensorData);
 
         var potMonitor = $('#potMonitor');
@@ -38,7 +44,7 @@ $(document).ready(function() {
         photoMonitor.text(connectionClosedText);
     };
 
-    toggleControls(false);
+    toggleControls(0);
 
     $('#controlModeSwitch').change(function() { onSwitchClick(); }); 
     $("#servoSlider").on("change", function() { sendServoData(); });
