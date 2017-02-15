@@ -55,30 +55,30 @@ void loop() {
         motorName = strtok(buffer,":");
         motorVal = strtok(NULL,":");
 
-        Serial.println("*Received command >" + String(motorName) + ":" + String(motorVal) + "<#");
+//        Serial.println("*Received command >" + String(motorName) + ":" + String(motorVal) + "<#");
         
         if (strcmp(motorName, "state") == 0) {
             if (strcmp(motorVal, "0") == 0) {
                 motor_state = STATE_SENSOR;
-                Serial.println("*Motor State: Sensor#");
+//                Serial.println("*Motor State: Sensor#");
             } else if (strcmp(motorVal, "1") == 0) {
                 motor_state = STATE_GUI;
-                Serial.println("*Motor State: GUI#");
+//                Serial.println("*Motor State: GUI#");
             }
         } else if (motor_state == STATE_GUI) { // We read from serial, so might as well.
             if (strcmp(motorName, "servo") == 0) {
                 servo_input = atoi(motorVal);
-                Serial.println("*Servo Input: " + String(motorVal) + "#");
+//                Serial.println("*Servo Input: " + String(motorVal) + "#");
             } else if (strcmp(motorName, "dc") == 0) {
                 int received_dc_input = atoi(motorVal);
                 if (received_dc_input != dc_input) {
                     dc_input = received_dc_input;
                     update_dc = true;
                 }
-                Serial.println("*DC Input: " + String(motorVal) + "#");
+//                Serial.println("*DC Input: " + String(motorVal) + "#");
             } else if (strcmp(motorName, "stepper") == 0) {
                 stepper_input = atoi(motorVal);
-                Serial.println("*Stepper Input: " + String(motorVal) + "#");
+//                Serial.println("*Stepper Input: " + String(motorVal) + "#");
             }
         }
     } 
@@ -107,7 +107,7 @@ void checkSwitch() {
         delay(100);
       }
       motor_state = !motor_state;
-      Serial.println("*state-toggle#");
+//      Serial.println("*state-toggle#");
     }  
 }
 
