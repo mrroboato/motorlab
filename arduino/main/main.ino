@@ -89,12 +89,12 @@ void loop() {
     } 
 
     // Set Motors
-//    servoControl(servo_input);
-//    if (update_dc) {
-//        motorControl(dc_input); 
-//        update_dc = false;
-//    }
-    stepperControl(stepper_input);
+    servoControl(servo_input);
+    if (update_dc) {
+        motorControl(dc_input); 
+        update_dc = false;
+    }
+//    stepperControl(stepper_input);
     delay(50);
     
 }
