@@ -16,6 +16,8 @@ Servo ht_servo;
 int motor_state = STATE_SENSOR;
 byte byteRead;
 
+boolean update_dc = false;
+
 int servo_input;
 int dc_input;
 int stepper_input;
@@ -68,7 +70,11 @@ void loop() {
                 servo_input = atoi(motorVal);
                 Serial.println("*Servo Input: " + String(motorVal) + "#");
             } else if (strcmp(motorName, "dc") == 0) {
-                dc_input = atoi(motorVal);
+                int received_dc_input = atoi(motorVal);
+                if (received_dc_input != dc_input) {
+                    dc_input = received_dc_input;
+                    update_dc = true;
+                }
                 Serial.println("*DC Input: " + String(motorVal) + "#");
             } else if (strcmp(motorName, "stepper") == 0) {
                 stepper_input = atoi(motorVal);
@@ -83,8 +89,11 @@ void loop() {
     } 
 
     // Set Motors
-    servoControl(servo_input);
-//    motorControl(dc_input);
+//    servoControl(servo_input);
+    if (update_dc) {
+        motorControl(dc_input); 
+        update_dc = false;
+    }
 //    stepperControl(stepper_input);
     delay(50);
     
@@ -155,7 +164,10 @@ void readSensors() {
     {
       pwr = -pwr;
     }
-    dc_input = pwr;
+    if (pwr != dc_input) {
+        dc_input = pwr;
+        update_dc = true;
+    }
 
     // Stepper motor and Stepper motor.
     float raw = analogRead(LIGHT_PIN);
