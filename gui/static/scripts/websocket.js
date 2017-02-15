@@ -6,28 +6,29 @@ $(document).ready(function() {
 
     socket.onmessage = function (evt) {
 
-    	sensorData = JSON.parse(evt.data);
+    	receivedData = JSON.parse(evt.data);
 
-        if (sensorData['Type'] == 'stateData') {
-            isGUIState = sensorData['State'] == 1;
+        // console.log(receivedData);
+
+        if (receivedData['Type'] == 'stateData') {
+            isGUIState = receivedData['State'] == 1;
             toggleControls(isGUIState);
+            // console.log(receivedData['State']);
             return;
         }
 
-        // console.log(sensorData);
-
         var potMonitor = $('#potMonitor');
-        potMonitor.text(sensorData['Pot']);
+        potMonitor.text(receivedData['Pot']);
 
         var irMonitor = $('#irMonitor');
-        // ultMonitor.text(sensorData['Ult']);
-        irData = sensorData['Ir'];
+        // ultMonitor.text(receivedData['Ult']);
+        irData = receivedData['Ir'];
         // console.log(imuData);
         // console.log("%d, %d, %d", imuData[0],imuData[1], imuData[2]);
         irMonitor.text(irData);
 
         var photoMonitor = $('#photoMonitor');
-        photoMonitor.text(sensorData['Pho']);
+        photoMonitor.text(receivedData['Pho']);
     };
 
     socket.onclose = function() {
@@ -98,6 +99,7 @@ var sendStepperStopData = function() {
 
 
 var toggleControls = function(switchVal) {
+    $('#controlModeSwitch').prop( "checked", switchVal );
     if (switchVal) {
         hideSensorMonitors();
         showMotorControls();

@@ -165,7 +165,7 @@ func startSerial() {
         // log.Printf("%q", received[1:])
 
         if (socketCon != nil) {
-            if string(received) == "state-toggle" {
+            if string(received[1:]) == "state-toggle" {
                 if state == 0 { 
                     state = 1
                 } else {
