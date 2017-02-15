@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+
+<head> 
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <h2 class="title">Motor Lab</h2>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Switch -->
+<!--     <div class="switchMargin col s12 m12 l12">
+ --><!--         <div class="switch">
+            <label>
+                <div class="row"> 
+                  <h4 class="control-mode col s3 m2 l4">Sensor Control</h4>
+                  <input type="checkbox" id="controlModeSwitch">
+                  <span class="lever"></span>
+                  <h4 class="control-mode col s2 m2 l4">GUI Control</h4>
+                </div>
+            </label>
+        </div> -->
+
+        <div class="row">
+            <div class="col s9 m9 l9">
+                <label class="main-heading"> <h4> Input State Switch </h4> </label>
+                <div class="switch">
+                    <label>
+                        <b class="sub-heading col">Sensor Control</b>
+                        <input type="checkbox" id="controlModeSwitch" class="col">
+                        <span class="lever col"></span>
+                        <b class="sub-heading col">GUI Control</b>
+                    </label>
+                </div> 
+            </div>
+        </div>
+
+<!--     </div> -->
+
+    <div class="divider"></div>
+
+    <div class="row">
+        <div class="col s9 m9 l9">
+            <h4 class="main-heading">RC Servo</h4>
+            <div class="row" id="potMonitorContainer">
+                <h5 class="sub-heading col s6 m6 l6" id="potMonitorLabel" >Potentiometer</h5>
+                <h5 class="sub-heading col s3 m3 l3" id="potMonitor" > </h5>
+            </div>
+            <form action="#">
+                <p class="range-field col s4 m4 l4">
+                  <input type="range" id="servoSlider" min="0" max="180" step="1"/>
+                </p>
+            </form>
+            <br/>
+            <div id="servoSliderLabel"> 0 to 180 degrees</div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+        <div class="col s9 m9 l9">
+            <h4 class="main-heading">DC Motor</h4>
+
+            <div class="switch" id="dcModeSwitchContainer">
+                    <label>
+                        <b class="sub-heading col">Velocity</b>
+                        <input type="checkbox" id="dcModeSwitch" class="col">
+                        <span class="lever col"></span>
+                        <b class="sub-heading col">Position</b>
+                    </label>
+            </div>
+
+            <br/>
+
+            <div class="row" id="irMonitorContainer">
+                <h5 class="sub-heading col s6 m6 l6" id="irMonitorLabel" >IR Proximity Sensor</h5>
+                <h5 class="sub-heading col s3 m3 l3" id="irMonitor" > </h5>
+            </div>
+            <form action="#">
+                <p class="range-field col s4 m4 l4">
+                  <input type="range" id="dcSlider" min="-100" max="100" step="1"/>
+                </p>
+            </form>
+            <br/>
+            <div id="dcSliderLabel">-100% to 100%</div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+        <div class="col s9 m9 l9">
+            <h4 class="main-heading">Stepper Motor</h4>
+            <div class="row" id="photoMonitorContainer">
+                <h5 class="sub-heading col s6 m6 l6" id="photoMonitorLabel">Photoresistor</h5>
+                <h5 class="sub-heading col s3 m3 l3" id="photoMonitor"> </h5>
+            </div>
+            <a class="waves-effect waves-light btn" id="stepperBrightButton">
+                <i class="material-icons left">play_arrow</i>Bright Light
+            </a>
+            <a class="waves-effect waves-light blue btn" id="stepperAmbientButton">
+                <i class="material-icons left">pause_circle_filled</i>Ambient Light
+            </a>
+            <a class="waves-effect waves-light red btn" id="stepperDimButton">
+                <i class="material-icons left">play_arrow</i>Dim Light
+            </a>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+    <script src="http://threejs.org/build/three.min.js"></script>
+    <script src="http://threejs.org/examples/js/loaders/OBJLoader.js"></script>
+    <script type="text/javascript" src="scripts/websocket.js"></script>
+</div>
+</body>
+
+</html>

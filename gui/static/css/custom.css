@@ -1,0 +1,27 @@
+/* custom.css */
+
+.title {
+	color: #263238; 
+}
+
+.main-heading {
+    color: #263238;
+}
+
+.sub-heading {
+    color: #616161;
+}
+
+.switchMargin {
+    margin-top: 32px;
+    margin-bottom: 32px;
+}
+
+.range-min {
+    float: left;
+}
+
+.range-max {
+    right:0;
+    position: absolute;
+}
