@@ -18,17 +18,17 @@ $(document).ready(function() {
         }
 
         var potMonitor = $('#potMonitor');
-        potMonitor.text(receivedData['Pot']);
+        potMonitor.text(receivedData['Pot'].toString() + "°");
 
         var irMonitor = $('#irMonitor');
         // ultMonitor.text(receivedData['Ult']);
         irData = receivedData['Ir'];
         // console.log(imuData);
         // console.log("%d, %d, %d", imuData[0],imuData[1], imuData[2]);
-        irMonitor.text(irData);
+        irMonitor.text(irData.toString() + " cm");
 
         var photoMonitor = $('#photoMonitor');
-        photoMonitor.text(receivedData['Pho']/100);
+        photoMonitor.text((receivedData['Pho']/100).toString() + " V");
     };
 
     socket.onclose = function() {
@@ -51,8 +51,9 @@ $(document).ready(function() {
     $('#dcModeSwitch').change(function() { onDCSwitchClick(); }); 
     $("#servoSlider").on("change", function() { sendServoData(); });
     $("#dcSlider").on("change", function() { sendDCData(); });
-    $('#stepperRunButton').attr('href','javascript:sendStepperRunData()');
-    $('#stepperStopButton').attr('href','javascript:sendStepperStopData()');
+    $('#stepperBrightButton').attr('href','javascript:sendStepperBrightData()');
+    $('#stepperAmbientButton').attr('href','javascript:sendStepperAmbientData()');
+    $('#stepperDimButton').attr('href','javascript:sendStepperDimData()');
 });
 
 
@@ -65,6 +66,7 @@ var onSwitchClick = function() {
 var onDCSwitchClick = function() {
     var switchVal = $('#dcModeSwitch').prop('checked');
     sendDCSwitchData(switchVal);
+    changeDCRange(switchVal);
 }  
 
 
@@ -98,15 +100,21 @@ var sendDCData = function() {
     }
 }
 
-var sendStepperRunData = function() {
+var sendStepperBrightData = function() {
+    if(socket.readyState === socket.OPEN) {
+        socket.send('stepper:0');
+    }
+}
+
+var sendStepperAmbientData = function() {
     if(socket.readyState === socket.OPEN) {
         socket.send('stepper:1');
     }
 }
 
-var sendStepperStopData = function() {
+var sendStepperDimData = function() {
     if(socket.readyState === socket.OPEN) {
-        socket.send('stepper:0');
+        socket.send('stepper:2');
     }
 }
 
@@ -122,17 +130,19 @@ var toggleControls = function(switchVal) {
     }
 }
 
-var changeDCMode = function(switchVal) {
-    if (switchVal) {
+var changeDCRange = function(switchVal) {
+    if (!switchVal) {
         $('#dcSlider').prop({
             'min': -100,
             'max': 100
         });
+        $('#dcSliderLabel').text("-100% to 100%");
     } else {
         $('#dcSlider').prop({
             'min': 0,
             'max': 360
         });
+        $('#dcSliderLabel').text("0 to 360 degrees");
     }
 }
 
@@ -152,15 +162,21 @@ var showSensorMonitors = function() {
 var hideMotorControls = function() {
     $('#servoSlider').hide();
     $('#dcSlider').hide();
-    $('#stepperRunButton').hide();
-    $('#stepperStopButton').hide();
+    $('#stepperBrightButton').hide();
+    $('#stepperAmbientButton').hide();
+    $('#stepperDimButton').hide();
     $('#dcModeSwitchContainer').hide();
+    $('#dcSliderLabel').hide();
+    $('#servoSliderLabel').hide();
 }
 
 var showMotorControls = function() {
     $('#servoSlider').show();
     $('#dcSlider').show();
-    $('#stepperRunButton').show();
-    $('#stepperStopButton').show();
+    $('#stepperBrightButton').show();
+    $('#stepperAmbientButton').show();
+    $('#stepperDimButton').show();
     $('#dcModeSwitchContainer').show();
+    $('#dcSliderLabel').show();
+    $('#servoSliderLabel').show();
 }

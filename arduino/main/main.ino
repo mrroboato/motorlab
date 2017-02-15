@@ -12,13 +12,13 @@
 #define POT_PIN (A0)
 #define STATE_SENSOR (0)
 #define STATE_GUI (1)
-#define STATE_VAL (2)
+#define STATE_VEL (2)
 #define STATE_POS (3)
 Servo ht_servo;
 
 byte byteRead;
 
-int motor_state = STATE_VAL;
+int motor_state = STATE_SENSOR;
 int dc_state = STATE_POS;
 boolean update_dc = false;
 
@@ -73,7 +73,7 @@ void loop() {
             } else if (strcmp(motorVal, "2") == 0) {
                 dc_state = STATE_VEL;
             } else if (strcmp(motorVal, "3") == 0) {
-                dc_state = STATE_POS:
+                dc_state = STATE_POS;
             }
         } else if (motor_state == STATE_GUI) { // We read from serial, so might as well.
             if (strcmp(motorName, "servo") == 0) {
@@ -91,9 +91,12 @@ void loop() {
                 if (received_stepper_input == 0) {
                     stepper_input = LOW;
                     stepper_run = 1;
-                } else {
+                } else if (received_stepper_input == 2) {
                     stepper_input = HIGH;
                     stepper_run = 1;
+                } else {
+                    stepper_input = HIGH;
+                    stepper_run = 0;
                 }
 //                Serial.println("*Stepper Input: " + String(motorVal) + "#");
             }

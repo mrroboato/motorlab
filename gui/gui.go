@@ -83,7 +83,7 @@ func initServer() {
         for {
             _, p, err := socketCon.ReadMessage()
             handleError(err)
-            // log.Printf("%s\n", p)
+            log.Printf("%s\n", p)
             if serialCon != nil {
                 // log.Printf("Sending to arduino.")
                 messageSlice := strings.Split(string(p), ":")
