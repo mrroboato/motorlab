@@ -41,8 +41,8 @@ $(document).ready(function() {
     toggleControls(false);
 
     $('#controlModeSwitch').change(function() { onSwitchClick(); }); 
-    $("#servoSlider").on("input change", function() { sendServoData(); });
-    $("#dcSlider").on("input change", function() { sendDCData(); });
+    $("#servoSlider").on("change", function() { sendServoData(); });
+    $("#dcSlider").on("change", function() { sendDCData(); });
     $('#stepperRunButton').attr('href','javascript:sendStepperRunData()');
     $('#stepperStopButton').attr('href','javascript:sendStepperStopData()');
 });
