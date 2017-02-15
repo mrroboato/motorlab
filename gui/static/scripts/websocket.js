@@ -117,11 +117,13 @@ var showSensorMonitors = function() {
 var hideMotorControls = function() {
     $('#servoSlider').hide();
     $('#dcSlider').hide();
-    $('#stepperButton').hide();
+    $('#stepperRunButton').hide();
+    $('#stepperStopButton').hide();
 }
 
 var showMotorControls = function() {
     $('#servoSlider').show();
     $('#dcSlider').show();
-    $('#stepperButton').show();
+    $('#stepperRunButton').show();
+    $('#stepperStopButton').show();
 }
